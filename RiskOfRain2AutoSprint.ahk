@@ -85,7 +85,7 @@ return
 GetCharName(ByRef char)
 {
 	OutputDebug, GetCharName::switch %char%
-	
+
 	switch char
 	{
 		case "Char1":
@@ -154,7 +154,7 @@ GetMonitorIndexFromWindow(windowHandle)
 			}
 		}
 	}
-	
+
 	OutputDebug, GetMonitorIndexFromWindow::end
 	return %monitorIndex%
 }
@@ -162,9 +162,9 @@ GetMonitorIndexFromWindow(windowHandle)
 GetSprintDelay(ByRef key)
 {
 	global
-	
+
 	OutputDebug, GetSprintDelay::switch %key%
-	
+
 	switch key
 	{
 		case primaryKey:
@@ -200,10 +200,10 @@ HookWindow()
 IsWindowFullscreen(windowID)
 {
 	global windowName
-	
+
 	WinGetPos, windowX, windowY, windowWidth, windowHeight, %windowName%
 	SysGet, monitor, Monitor, % GetMonitorIndexFromWindow(windowID)
-	
+
 	OutputDebug, IsWindowFullscreen::windowX %windowX%
 	OutputDebug, IsWindowFullscreen::windowY %windowY%
 	OutputDebug, IsWindowFullscreen::windowWidth %windowWidth%
@@ -212,7 +212,7 @@ IsWindowFullscreen(windowID)
 	OutputDebug, IsWindowFullscreen::monitorTop %monitorTop%
 	OutputDebug, IsWindowFullscreen::monitorRight %monitorRight%
 	OutputDebug, IsWindowFullscreen::monitorBottom %monitorBottom%
-	
+
 	monitorWidth := monitorRight - monitorLeft
 	OutputDebug, IsWindowFullscreen::monitorWidth %monitorWidth%
 	monitorHeight := monitorBottom - monitorTop
@@ -234,7 +234,7 @@ OnFocusChanged()
 	if (!WinExist(windowName) || !windowID)
 	{
 		HookWindow()
-		RegisterHotkeys()	
+		RegisterHotkeys()
 	}
 	else
 	{
@@ -252,7 +252,7 @@ ReadConfigFile()
 {
 	; All the variables below are declared as global so they can be used in the whole script
 	global
-	
+
 	; General
 	IniRead, windowName, %configFileName%, General, windowName
 	IniRead, hookDelay, %configFileName%, General, hookDelay, 0
@@ -268,7 +268,7 @@ ReadConfigFile()
 	IniRead, secondaryKey, %configFileName%, Keys, secondaryKey, RButton
 	IniRead, utilityKey, %configFileName%, Keys, utilityKey, LCtrl
 	IniRead, specialKey, %configFileName%, Keys, specialKey, R
-	
+
 	; Character
 	IniRead, bPrimarySprint, %configFileName%, %currentChar%, bPrimarySprint, 1
 	IniRead, bSecondarySprint, %configFileName%, %currentChar%, bSecondarySprint, 1
@@ -283,7 +283,7 @@ ReadConfigFile()
 	IniRead, secondarySprintDelay, %configFileName%, %currentChar%, secondarySprintDelay, 1
 	IniRead, utilitySprintDelay, %configFileName%, %currentChar%, utilitySprintDelay, 1
 	IniRead, specialSprintDelay, %configFileName%, %currentChar%, specialSprintDelay, 1
-	
+
 	; Debug
 	IniRead, bDebug, %configFileName%, Debug, bDebug, 0
 	IniRead, bSound, %configFileName%, Debug, bSound, 1	
@@ -292,7 +292,7 @@ ReadConfigFile()
 RegisterHotkeys()
 {
 	global
-	
+
 	; Fix for autoforward bug (https://autohotkey.com/board/topic/56878-keywait-not-triggering)
 	Hotkey, ~%forwardKey%, pressAndSprint, % bForwardSprint ? "On" : "Off"
 	Hotkey, ~%primaryKey%, % bPrimaryPress ? "pressAndSprint" : "releaseAndSprint", % bPrimarySprint ? "On" : "Off"
@@ -304,7 +304,7 @@ RegisterHotkeys()
 ReleaseAllKeys()
 {
 	global
-	
+
 	; Don't release keys that aren't pressed
 	if (GetKeyState(primaryKey))
 		SendInput % "{" . primaryKey . " up}"
@@ -331,12 +331,12 @@ ShowOverlay(currentChar, nextChar)
 	global textVisibleDelay
 	global windowID
 	global windowName
-	
+
 	OutputDebug, ShowOverlay::begin
-	
+
 	; Adjust the text location based on windowed mode
 	WinGetPos, windowX, windowY, windowWidth, windowHeight, %windowName%
-	
+
 	if (IsWindowFullscreen(windowID))
 	{
 		windowX += 3
@@ -347,7 +347,7 @@ ShowOverlay(currentChar, nextChar)
 		windowX += 10
 		windowY += 30
 	}
-	
+
 	; Display white text on a transparent background
 	Gui, Destroy
 	Gui +LastFound +AlwaysOnTop -Caption +ToolWindow
@@ -356,17 +356,17 @@ ShowOverlay(currentChar, nextChar)
 	Gui, Add, Text, X0 Y0 cWhite, % "Switched from " . GetCharName(currentChar) . " to " . GetCharName(nextChar)
 	WinSet, TransColor, Black 255
 	Gui, Show, X%windowX% Y%windowY% NoActivate
-	
+
 	Sleep, %textVisibleDelay%
 	Gui, Destroy
-	
+
 	OutputDebug, ShowOverlay::end
 }
 
 SoundBeep(ByRef pDuration := 150)
 {
 	global bSound
-	
+
 	if (bSound)
 		SoundBeep, 1000, pDuration
 }
@@ -420,7 +420,7 @@ else if (nextChar = "Char-")
 
 ; Don't switch unless it's a different character
 if (currentChar != nextChar)
-{	
+{
 	SoundBeep()
 	OutputDebug, SwitchChar::from %currentChar% to %nextChar%
 	IniWrite, %nextChar%, %configFileName%, General, currentChar
