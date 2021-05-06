@@ -187,9 +187,6 @@ HookWindow()
 
 	; Make the hotkeys active only for a specific window
 	OutputDebug, HookWindow::begin
-	WinWaitActive, %windowName%
-	OutputDebug, HookWindow::WinWaitActive
-	Sleep, %hookDelay%
 	WinGet, windowID, ID, %windowName%
 	OutputDebug, HookWindow::WinGet %windowID%
 	GroupAdd, windowIDGroup, ahk_id %windowID%
@@ -229,9 +226,12 @@ OnFocusChanged()
 	global
 
 	OutputDebug, OnFocusChanged::begin
+	OutputDebug, OnFocusChanged::WinWaitActive
+	WinWaitActive, %windowName%
+	Sleep, %hookDelay%
 
 	; Make sure to hook the window again if it no longer exists
-	if (!WinExist(windowName) || !windowID)
+	if (windowID != WinExist(windowName))
 	{
 		HookWindow()
 		RegisterHotkeys()
